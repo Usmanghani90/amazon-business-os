@@ -1,0 +1,76 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Boxes } from "lucide-react";
+import { navigation } from "@/lib/nav";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+
+export function AppSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <Sidebar collapsible="icon" className="border-r">
+      <SidebarHeader className="border-b">
+        <Link href="/dashboard" className="flex items-center gap-2.5 px-1.5 py-1">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+            <Boxes className="h-5 w-5" />
+          </div>
+          <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
+            <span className="text-sm font-semibold tracking-tight">Amazon Business OS</span>
+            <span className="text-[11px] text-muted-foreground">FBA Ventures LLC</span>
+          </div>
+        </Link>
+      </SidebarHeader>
+
+      <SidebarContent>
+        {navigation.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarMenu>
+              {group.items.map((item) => {
+                const active =
+                  pathname === item.href || pathname.startsWith(item.href + "/");
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      render={<Link href={item.href} />}
+                      isActive={active}
+                      tooltip={item.title}
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                    {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+
+      <SidebarFooter className="border-t">
+        <div className="px-2 py-1.5 text-[11px] text-muted-foreground group-data-[collapsible=icon]:hidden">
+          <span className="inline-flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Demo workspace · v0.1
+          </span>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
