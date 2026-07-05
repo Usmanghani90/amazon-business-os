@@ -37,6 +37,44 @@ export function BrandMark({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Sidebar brand: shows the full logo lockup (public/logo.png) when the sidebar
+ * is expanded, and a compact monogram badge when collapsed to icons.
+ * Falls back to the built-in monogram + name if the image is missing.
+ */
+export function SidebarBrand() {
+  const [useFallback, setUseFallback] = React.useState(false);
+
+  return (
+    <>
+      {/* Expanded — full lockup */}
+      <div className="flex w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-950 px-3 py-2.5 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden">
+        {useFallback ? (
+          <span className="flex items-center gap-2 text-white">
+            <TazuMonogram className="h-6 w-6" />
+            <span className="text-sm font-semibold tracking-wide">{BRAND_NAME}</span>
+          </span>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/logo.png"
+            alt={BRAND_NAME}
+            className="h-14 w-auto max-w-full object-contain"
+            onError={() => setUseFallback(true)}
+          />
+        )}
+      </div>
+
+      {/* Collapsed — monogram badge */}
+      <div className="hidden justify-center group-data-[collapsible=icon]:flex">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-950 text-white ring-1 ring-white/10">
+          <TazuMonogram className="h-5 w-5" />
+        </div>
+      </div>
+    </>
+  );
+}
+
 /** Geometric TAZU monogram — a "T" crossed by the signature lightning "Z". */
 export function TazuMonogram({ className }: { className?: string }) {
   return (

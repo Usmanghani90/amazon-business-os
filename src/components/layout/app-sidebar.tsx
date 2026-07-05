@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navigation } from "@/lib/nav";
-import { BrandMark, BRAND_NAME, BRAND_TAGLINE } from "@/components/brand";
+import { SidebarBrand } from "@/components/brand";
 import {
   Sidebar,
   SidebarContent,
@@ -24,12 +24,8 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="border-b">
-        <Link href="/dashboard" className="flex items-center gap-2.5 px-1.5 py-1">
-          <BrandMark className="h-9 w-9" />
-          <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold tracking-wide">{BRAND_NAME}</span>
-            <span className="text-[9px] tracking-[0.14em] text-muted-foreground">{BRAND_TAGLINE}</span>
-          </div>
+        <Link href="/dashboard" className="block px-1 py-1">
+          <SidebarBrand />
         </Link>
       </SidebarHeader>
 
