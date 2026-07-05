@@ -30,7 +30,7 @@ export async function Topbar() {
           }))}
         />
         <Separator orientation="vertical" className="mx-1 h-6" />
-        <UserMenu name={admin?.name ?? "Admin"} email={admin?.email ?? "admin@fbaventures.com"} />
+        <UserMenu name={admin?.name ?? "Admin"} email={admin?.email ?? "admin@tazuventures.com"} />
       </div>
     </header>
   );

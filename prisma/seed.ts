@@ -69,8 +69,8 @@ async function main() {
   // Company -------------------------------------------------------------------
   await db.company.create({
     data: {
-      name: "Amazon Business OS",
-      legalName: "FBA Ventures LLC",
+      name: "TAZU Ventures",
+      legalName: "TAZU Ventures LLC",
       baseCurrency: "USD",
       country: "United States",
       timezone: "America/New_York",
@@ -139,7 +139,7 @@ async function main() {
       db.partner.create({
         data: {
           name,
-          email: `${name.split(" ")[0].toLowerCase()}@fbaventures.com`,
+          email: `${name.split(" ")[0].toLowerCase()}@tazuventures.com`,
           equityPct: 25,
           joinedDate: daysAgo(365 - i * 5),
         },
@@ -149,7 +149,7 @@ async function main() {
 
   // Admin user ----------------------------------------------------------------
   await db.user.create({
-    data: { email: "admin@fbaventures.com", name: "Operations Admin", role: "ADMIN" },
+    data: { email: "admin@tazuventures.com", name: "Operations Admin", role: "ADMIN" },
   });
 
   // Bank accounts -------------------------------------------------------------

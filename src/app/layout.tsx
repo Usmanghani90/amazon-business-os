@@ -8,11 +8,11 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: {
-    default: "Amazon Business OS",
-    template: "%s · Amazon Business OS",
+    default: "TAZU Ventures",
+    template: "%s · TAZU Ventures",
   },
   description:
-    "Enterprise operating system for a multi-partner Amazon FBA business — finance, partner accounting, inventory, profitability, advertising, and executive reporting.",
+    "TAZU Ventures — operating system for a multi-partner Amazon FBA business: finance, partner accounting, inventory, profitability, advertising, and executive reporting.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

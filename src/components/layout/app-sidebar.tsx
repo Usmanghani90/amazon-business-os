@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes } from "lucide-react";
 import { navigation } from "@/lib/nav";
+import { BrandMark, BRAND_NAME, BRAND_TAGLINE } from "@/components/brand";
 import {
   Sidebar,
   SidebarContent,
@@ -25,12 +25,10 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader className="border-b">
         <Link href="/dashboard" className="flex items-center gap-2.5 px-1.5 py-1">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-            <Boxes className="h-5 w-5" />
-          </div>
+          <BrandMark className="h-9 w-9" />
           <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
-            <span className="text-sm font-semibold tracking-tight">Amazon Business OS</span>
-            <span className="text-[11px] text-muted-foreground">FBA Ventures LLC</span>
+            <span className="text-sm font-semibold tracking-wide">{BRAND_NAME}</span>
+            <span className="text-[9px] tracking-[0.14em] text-muted-foreground">{BRAND_TAGLINE}</span>
           </div>
         </Link>
       </SidebarHeader>
