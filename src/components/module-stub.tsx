@@ -13,10 +13,11 @@ export interface ModuleStubMeta {
  * Consistent placeholder for modules whose data model is fully seeded but whose
  * dedicated UI ships in a later iteration. Keeps navigation working end-to-end.
  */
-export function ModuleStub({ meta }: { meta: ModuleStubMeta }) {
+export function ModuleStub({ meta, action }: { meta: ModuleStubMeta; action?: React.ReactNode }) {
   return (
     <>
       <PageHeader title={meta.title} description={meta.description}>
+        {action}
         <Badge variant="secondary" className="gap-1">
           <Sparkles className="h-3 w-3" /> In roadmap
         </Badge>
