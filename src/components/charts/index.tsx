@@ -215,3 +215,78 @@ export function DonutChart({ data, height = 260, format }: DonutProps) {
     </ResponsiveContainer>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Waterfall — Titan CM1 → CM4 → Net Profit
+// ---------------------------------------------------------------------------
+
+export interface WaterfallStepData {
+  label: string;
+  value: number; // signed: revenue/subtotals +, costs −
+  type: "total" | "subtotal" | "cost";
+}
+
+export function WaterfallChart({
+  steps,
+  height = 320,
+  format = "currency",
+}: {
+  steps: WaterfallStepData[];
+  height?: number;
+  format?: ChartFormat;
+}) {
+  const fmt = makeFormatter(format);
+  let running = 0;
+  const data = steps.map((s) => {
+    if (s.type === "cost") {
+      const before = running;
+      running = before + s.value; // value is negative
+      const bottom = Math.min(before, running);
+      const top = Math.max(before, running);
+      return { name: s.label, base: bottom, bar: top - bottom, amount: s.value, kind: "cost" as const };
+    }
+    running = s.value;
+    return {
+      name: s.label,
+      base: Math.min(0, s.value),
+      bar: Math.abs(s.value),
+      amount: s.value,
+      kind: s.type,
+    };
+  });
+
+  const colorFor = (d: (typeof data)[number]) => {
+    if (d.kind === "cost") return "var(--chart-4)";
+    if (d.kind === "total") return d.amount >= 0 ? "var(--chart-2)" : "var(--destructive)";
+    return "var(--chart-1)"; // subtotal (CM1–CM4)
+  };
+
+  const WfTooltip = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    const row = payload[0]?.payload;
+    if (!row) return null;
+    return (
+      <div className="rounded-lg border bg-popover px-3 py-2 text-xs shadow-md">
+        <div className="font-medium text-popover-foreground">{row.name}</div>
+        <div className="mt-0.5 tabular-nums text-muted-foreground">{fmt(row.amount)}</div>
+      </div>
+    );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={height}>
+      <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+        <XAxis dataKey="name" {...axisProps} interval={0} angle={-30} textAnchor="end" height={64} />
+        <YAxis {...axisProps} width={52} tickFormatter={fmt} />
+        <Tooltip content={<WfTooltip />} cursor={{ fill: "var(--muted)", opacity: 0.3 }} />
+        <Bar dataKey="base" stackId="wf" fill="transparent" />
+        <Bar dataKey="bar" stackId="wf" radius={[3, 3, 0, 0]} maxBarSize={64}>
+          {data.map((d) => (
+            <Cell key={d.name} fill={colorFor(d)} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

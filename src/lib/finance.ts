@@ -84,6 +84,89 @@ export function computeProfit(i: ProfitInputs): ProfitResult {
 }
 
 // ---------------------------------------------------------------------------
+// Titan Network layered Contribution Margin waterfall (CM1 → CM4 → Net Profit)
+//
+//   Revenue
+//     − Landing Cost (mfg + freight + shipping + customs + inspection +
+//                     packaging + prep + labeling + other)          → CM1
+//     − Amazon Fees (referral + FBA + storage + removal + disposal +
+//                    refund admin + other)                          → CM2
+//     − Advertising (SP + SB + SD + DSP)                            → CM3
+//     − Refunds & Promotions (refunds + returns + coupons + promos) → CM4
+//     − Operating Expenses (software, salary, VA, warehouse, …)     → Net Profit
+// ---------------------------------------------------------------------------
+
+export interface WaterfallInputs {
+  revenue: number;
+  landingCost: number;
+  amazonFees: number;
+  advertising: number;
+  refundsPromotions: number;
+  operatingExpenses: number;
+}
+
+export type WaterfallStepType = "total" | "cost" | "subtotal";
+
+export interface WaterfallStep {
+  key: string;
+  label: string;
+  /** Signed value: revenue/subtotals positive, cost layers negative. */
+  value: number;
+  type: WaterfallStepType;
+}
+
+export interface WaterfallResult extends WaterfallInputs {
+  cm1: number;
+  cm2: number;
+  cm3: number;
+  cm4: number;
+  netProfit: number;
+  cm1Margin: number;
+  cm2Margin: number;
+  cm3Margin: number;
+  cm4Margin: number;
+  netMargin: number;
+  steps: WaterfallStep[];
+}
+
+export function computeWaterfall(i: WaterfallInputs): WaterfallResult {
+  const cm1 = i.revenue - i.landingCost;
+  const cm2 = cm1 - i.amazonFees;
+  const cm3 = cm2 - i.advertising;
+  const cm4 = cm3 - i.refundsPromotions;
+  const netProfit = cm4 - i.operatingExpenses;
+
+  const steps: WaterfallStep[] = [
+    { key: "revenue", label: "Revenue", value: i.revenue, type: "total" },
+    { key: "landingCost", label: "Landing Cost", value: -i.landingCost, type: "cost" },
+    { key: "cm1", label: "CM1", value: cm1, type: "subtotal" },
+    { key: "amazonFees", label: "Amazon Fees", value: -i.amazonFees, type: "cost" },
+    { key: "cm2", label: "CM2", value: cm2, type: "subtotal" },
+    { key: "advertising", label: "Advertising", value: -i.advertising, type: "cost" },
+    { key: "cm3", label: "CM3", value: cm3, type: "subtotal" },
+    { key: "refundsPromotions", label: "Refunds & Promos", value: -i.refundsPromotions, type: "cost" },
+    { key: "cm4", label: "CM4", value: cm4, type: "subtotal" },
+    { key: "operatingExpenses", label: "Operating Exp.", value: -i.operatingExpenses, type: "cost" },
+    { key: "netProfit", label: "Net Profit", value: netProfit, type: "total" },
+  ];
+
+  return {
+    ...i,
+    cm1,
+    cm2,
+    cm3,
+    cm4,
+    netProfit,
+    cm1Margin: pct(cm1, i.revenue),
+    cm2Margin: pct(cm2, i.revenue),
+    cm3Margin: pct(cm3, i.revenue),
+    cm4Margin: pct(cm4, i.revenue),
+    netMargin: pct(netProfit, i.revenue),
+    steps,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Advertising metrics
 // ---------------------------------------------------------------------------
 

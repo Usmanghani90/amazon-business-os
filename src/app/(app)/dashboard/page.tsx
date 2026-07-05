@@ -16,12 +16,14 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
+import Link from "next/link";
 import { getDashboardData } from "@/lib/dashboard-data";
+import { getProfitability } from "@/lib/profitability";
 import { PageHeader } from "@/components/page-header";
 import { StatCard } from "@/components/stat-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AreaTrend, BarTrend, DonutChart } from "@/components/charts";
+import { AreaTrend, BarTrend, DonutChart, WaterfallChart } from "@/components/charts";
 import { formatCompactCurrency, formatCurrency, formatDate, formatPercent } from "@/lib/format";
 
 export const metadata: Metadata = { title: "Executive Dashboard" };
@@ -30,9 +32,10 @@ export const dynamic = "force-dynamic";
 const money = (v: number) => formatCompactCurrency(v);
 
 export default async function DashboardPage() {
-  const data = await getDashboardData();
+  const [data, profitability] = await Promise.all([getDashboardData(), getProfitability()]);
   const k = data.kpis;
   const c = data.charts;
+  const w = profitability.business;
 
   return (
     <div className="space-y-6">
@@ -98,6 +101,37 @@ export default async function DashboardPage() {
           <StatCard label="TACOS" value={formatPercent(k.tacos)} icon={Target} hint="Ad spend ÷ total sales" invertDelta accent="text-amber-500" />
           <StatCard label="ROAS" value={`${k.roas.toFixed(2)}×`} icon={TrendingUp} hint="Ad sales ÷ ad spend" accent="text-emerald-500" />
         </div>
+      </section>
+
+      {/* Titan CM1→CM4 waterfall */}
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-medium text-muted-foreground">Contribution Margin Waterfall</h2>
+          <Link href="/profitability" className="text-xs font-medium text-primary hover:underline">
+            View per-SKU breakdown →
+          </Link>
+        </div>
+        <Card>
+          <CardContent className="p-4">
+            <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+              {[
+                { label: "CM1", value: w.cm1, margin: w.cm1Margin },
+                { label: "CM2", value: w.cm2, margin: w.cm2Margin },
+                { label: "CM3", value: w.cm3, margin: w.cm3Margin },
+                { label: "CM4", value: w.cm4, margin: w.cm4Margin },
+                { label: "Net Profit", value: w.netProfit, margin: w.netMargin },
+                { label: "Revenue", value: w.revenue, margin: 100 },
+              ].map((s) => (
+                <div key={s.label} className="rounded-lg border bg-muted/30 px-3 py-2">
+                  <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{s.label}</div>
+                  <div className="text-lg font-semibold tabular-nums">{money(s.value)}</div>
+                  <div className="text-[11px] text-muted-foreground">{formatPercent(s.margin)}</div>
+                </div>
+              ))}
+            </div>
+            <WaterfallChart steps={w.steps} height={300} />
+          </CardContent>
+        </Card>
       </section>
 
       {/* Charts */}

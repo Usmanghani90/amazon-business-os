@@ -561,18 +561,36 @@ model Product {
 }
 
 /// Unit economics assumptions used to compute CM1/CM2/CM3 and break-even.
+/// Unit economics for the Titan Network CM1→CM4 waterfall.
+/// Landing cost = product cost (Product.costPrice) + every per-unit layer below.
 model ProductEconomics {
   id                String   @id @default(cuid())
   product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId         String   @unique
-  referralFeePct    Decimal  @default(15) @db.Decimal(6, 3)
-  fbaFee            Decimal  @default(0) @db.Decimal(14, 2)
-  storageFeePerUnit Decimal  @default(0) @db.Decimal(14, 4)
-  freightPerUnit    Decimal  @default(0) @db.Decimal(14, 4)
-  inspectionPerUnit Decimal  @default(0) @db.Decimal(14, 4)
-  packagingPerUnit  Decimal  @default(0) @db.Decimal(14, 4)
-  miscPerUnit       Decimal  @default(0) @db.Decimal(14, 4)
-  updatedAt         DateTime @updatedAt
+
+  // --- Landing cost layers (per unit) — feed CM1 ---
+  freightPerUnit     Decimal @default(0) @db.Decimal(14, 4)
+  shippingPerUnit    Decimal @default(0) @db.Decimal(14, 4)
+  customsPerUnit     Decimal @default(0) @db.Decimal(14, 4)
+  inspectionPerUnit  Decimal @default(0) @db.Decimal(14, 4)
+  packagingPerUnit   Decimal @default(0) @db.Decimal(14, 4)
+  prepPerUnit        Decimal @default(0) @db.Decimal(14, 4)
+  labelingPerUnit    Decimal @default(0) @db.Decimal(14, 4)
+  otherLandedPerUnit Decimal @default(0) @db.Decimal(14, 4)
+
+  // --- Amazon fee layers — feed CM2 ---
+  referralFeePct     Decimal @default(15) @db.Decimal(6, 3)
+  fbaFee             Decimal @default(0) @db.Decimal(14, 2)
+  storageFeePerUnit  Decimal @default(0) @db.Decimal(14, 4)
+  removalPerUnit     Decimal @default(0) @db.Decimal(14, 4)
+  disposalPerUnit    Decimal @default(0) @db.Decimal(14, 4)
+  refundAdminPerUnit Decimal @default(0) @db.Decimal(14, 4)
+  otherAmazonPerUnit Decimal @default(0) @db.Decimal(14, 4)
+
+  // Deprecated — retained for backward compatibility (folded into otherLanded).
+  miscPerUnit        Decimal @default(0) @db.Decimal(14, 4)
+
+  updatedAt          DateTime @updatedAt
 }
 
 /// Current inventory state per product (latest snapshot).
