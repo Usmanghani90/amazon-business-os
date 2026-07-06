@@ -46,32 +46,28 @@ export function SidebarBrand() {
   const [useFallback, setUseFallback] = React.useState(false);
 
   return (
-    <>
-      {/* Expanded — full lockup */}
-      <div className="flex w-full items-center justify-center overflow-hidden rounded-lg bg-neutral-950 px-3 py-2.5 ring-1 ring-white/10 group-data-[collapsible=icon]:hidden">
+    <div className="flex items-center gap-2.5">
+      {/* Square logo mark (monogram cropped from the lockup, SVG fallback) */}
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-neutral-950 text-white ring-1 ring-white/10">
         {useFallback ? (
-          <span className="flex items-center gap-2 text-white">
-            <TazuMonogram className="h-6 w-6" />
-            <span className="text-sm font-semibold tracking-wide">{BRAND_NAME}</span>
-          </span>
+          <TazuMonogram className="h-6 w-6" />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src="/logo.png"
             alt={BRAND_NAME}
-            className="h-14 w-auto max-w-full object-contain"
+            className="h-full w-full scale-[1.35] object-cover object-top"
             onError={() => setUseFallback(true)}
           />
         )}
       </div>
 
-      {/* Collapsed — monogram badge */}
-      <div className="hidden justify-center group-data-[collapsible=icon]:flex">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-950 text-white ring-1 ring-white/10">
-          <TazuMonogram className="h-5 w-5" />
-        </div>
+      {/* Company name + tagline as crisp text (hidden when collapsed to icons) */}
+      <div className="flex flex-col leading-tight group-data-[collapsible=icon]:hidden">
+        <span className="text-sm font-semibold tracking-wide text-foreground">{BRAND_NAME}</span>
+        <span className="text-[9px] font-medium tracking-[0.16em] text-muted-foreground">{BRAND_TAGLINE}</span>
       </div>
-    </>
+    </div>
   );
 }
 
