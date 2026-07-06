@@ -23,12 +23,14 @@ import {
 export interface CrudField {
   name: string;
   label: string;
-  type: "text" | "number" | "select" | "checkbox" | "color";
+  type: "text" | "number" | "select" | "checkbox" | "color" | "date";
   options?: { value: string; label: string }[];
   required?: boolean;
   placeholder?: string;
   step?: string;
   defaultValue?: string | number | boolean;
+  /** Span both columns in the two-column grid. */
+  full?: boolean;
 }
 
 export type CrudCellFormat = "text" | "yesno" | "active" | "badge" | "colorName";
@@ -206,7 +208,7 @@ export function SettingsCrud({
                   <Input
                     id={f.name}
                     name={f.name}
-                    type={f.type === "number" ? "number" : f.type === "color" ? "color" : "text"}
+                    type={f.type === "number" ? "number" : f.type === "color" ? "color" : f.type === "date" ? "date" : "text"}
                     step={f.step}
                     required={f.required}
                     placeholder={f.placeholder}
